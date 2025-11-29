@@ -492,3 +492,193 @@ h1 {
     }
 }
 
+.eeg-panel {
+
+    position: fixed;
+
+    bottom: 30px;
+
+    right: 30px;
+
+    /* Efekt szkła */
+
+    background: rgb(239, 128, 14);
+
+    backdrop-filter: blur(12px);
+
+    -webkit-backdrop-filter: blur(12px);
+
+
+
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Bardzo subtelna ramka */
+
+    padding: 12px 20px;
+
+    border-radius: 20px; /* Zaokrąglony kształt (pill shape) */
+
+
+
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    display: flex;
+
+    flex-direction: row; /* Układamy w poziomie: tekst obok oka */
+
+    align-items: center;
+
+    gap: 12px;
+
+
+
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); /* Miękki cień */
+
+    z-index: 1000;
+
+    transition: all 0.3s ease;
+
+}
+
+
+
+.eeg-label {
+
+    font-size: 11px;
+
+    color: rgba(255, 255, 255, 0.7); /* Lekko wyszarzony tekst */
+
+    font-weight: 600;
+
+    letter-spacing: 0.5px;
+
+    margin: 0;
+
+    text-transform: uppercase;
+
+}
+/* --- OKO AI --- */
+.eye-socket {
+    width: 50px;
+    height: 28px;
+    /* Twoje białe tło oka */
+    background: #ffffff;
+
+    /* Idealny owal */
+    border-radius: 50%;
+
+    /* Subtelne cienie wewnątrz */
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Kluczowe dla powiek! */
+
+    /* Dodajemy border, żeby oko odcinało się od pomarańczowego tła */
+    border: 2px solid rgba(255, 255, 255, 0.4);
+}
+
+/* --- RUCHOME POWIEKI (To dodaje animację zamykania) --- */
+.eye-socket::before,
+.eye-socket::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 42%; /* Powieki zajmują prawie całe oko, zostawią tylko szparkę */
+
+    /* Kolor powieki - Twój pomarańczowy, żeby pasował do Superlike */
+    background-color: #ef800e;
+
+    z-index: 10;
+    transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Górna powieka - schowana w górze */
+.eye-socket::before {
+    top: 0;
+    transform: translateY(-110%);
+    border-bottom: 1px solid rgba(0,0,0,0.1); /* Lekka krawędź powieki */
+}
+
+/* Dolna powieka - schowana w dole */
+.eye-socket::after {
+    bottom: 0;
+    transform: translateY(110%);
+    border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+
+/* --- ŹRENICA --- */
+.eye-pupil {
+    width: 12px; /* Trochę większa, żeby była wyraźna na białym */
+    height: 12px;
+    background-color: #000000; /* Czarna źrenica */
+    border-radius: 50%;
+
+    /* Lekki połysk na źrenicy */
+    box-shadow: 0 0 4px rgba(0,0,0,0.3);
+
+    position: relative;
+    z-index: 1; /* Musi być pod powiekami (które mają z-index 10) */
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Opcjonalnie: mały biały błysk w oku dla realizmu */
+.eye-pupil::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    right: 3px;
+    width: 3px;
+    height: 3px;
+    background: white;
+    border-radius: 50%;
+}
+
+
+/* --- STANY AKTYWNE --- */
+
+/* 1. Lewo (Odrzucenie - Czerwony) */
+.active-left {
+    border-color: rgba(255, 71, 87, 0.5);
+    background: #fff0f0; /* Lekko różowe białko oka ze złości */
+}
+.active-left .eye-pupil {
+    transform: translateX(-14px);
+    background-color: #ff4757; /* Źrenica robi się czerwona */
+    box-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
+}
+
+/* 2. Prawo (Like - Zielony) */
+.active-right {
+    border-color: rgba(46, 213, 115, 0.5);
+    background: #f0fff4; /* Lekko zielone białko */
+}
+.active-right .eye-pupil {
+    transform: translateX(14px);
+    background-color: #2ed573; /* Źrenica robi się zielona */
+    box-shadow: 0 0 10px rgba(46, 213, 115, 0.5);
+}
+
+/* 3. Góra (SUPERLIKE - Pomarańczowe mrużenie) */
+.active-up {
+    /* Nie zmieniamy tła na pomarańczowe, bo powieki to zrobią! */
+    border-color: #31a7da;
+}
+
+/* Zsuwamy powieki! */
+.active-up::before {
+    transform: translateY(0); /* Górna w dół */
+}
+.active-up::after {
+    transform: translateY(0); /* Dolna w górę */
+}
+
+/* Źrenica w szparce */
+.active-up .eye-pupil {
+    transform: scale(0.8); /* Lekko mniejsza ze skupienia */
+    background-color: #31a7da; /* Świeci na pomarańczowo */
+    box-shadow: 0 0 15px #1f7c9f; /* Mocny blask */
+}
+
