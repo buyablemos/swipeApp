@@ -16,19 +16,31 @@ function App() {
     const [animationDirection, setAnimationDirection] = useState(null);
     const [isAnimating, setIsAnimating] = useState(false);
 
+    const [activeSignal, setActiveSignal] = useState(null);
+
     const ANIMATION_DURATION = 600; // Czas trwania animacji w ms
 
     // --- POBIERANIE DANYCH ---
     useEffect(() => {
+        // 1. Pobieramy WSZYSTKIE produkty (zmieniono URL na ogólny)
         fetch('https://fakestoreapi.com/products/')
             .then(res => res.json())
             .then(json => {
-                const formattedData = json.map(item => ({
+                // 2. FILTROWANIE: Zostaw tylko to, co NIE jest elektroniką
+                const onlyClothing = json.filter(item => item.category !== 'electronics');
+
+                /* OPCJA B (LEPSZA): Jeśli chcesz TYLKO ubrania (bez biżuterii), użyj tego zamiast powyższego:
+                   const onlyClothing = json.filter(item => item.category.includes('clothing'));
+                */
+
+                // 3. Formatowanie przefiltrowanych danych
+                const formattedData = onlyClothing.map(item => ({
                     id: item.id,
                     name: item.title.substring(0, 20) + '...',
                     price: item.price + ' USD',
                     url: item.image
                 }));
+
                 setProducts(formattedData);
                 setLoading(false);
             })
@@ -71,15 +83,25 @@ function App() {
             setIsAnimating(false);
         }, ANIMATION_DURATION);
     };
-
+    const triggerSignal = (dir) => {
+        setActiveSignal(dir);
+        // Resetujemy sygnał po 200ms, żeby kropka wróciła na środek
+        setTimeout(() => setActiveSignal(null), 200);
+    };
     // --- OBSŁUGA KLAWIATURY ---
     useEffect(() => {
         const handleKeyDown = (event) => {
             if (!canSwipe) return;
             switch (event.key) {
-                case 'a': swipe('left'); break;
-                case 'd': swipe('right'); break;
-                case 'w': swipe('up'); break;
+                case 'a': swipe('left');
+                        triggerSignal('left');
+                break;
+                case 'd': swipe('right');
+                    triggerSignal('right');
+                break;
+                case 'w': swipe('up');
+                    triggerSignal('up');
+                    break;
                 default: break;
             }
         };
@@ -102,31 +124,39 @@ function App() {
 
     return (
         <div className="app">
+            <div className="eeg-panel">
+                <span className="eeg-label">EEG CONNECTED</span>
+
+                {/* To jest nasze cyfrowe oko */}
+                <div className={`eye-socket ${activeSignal ? 'active-' + activeSignal : ''}`}>
+                    <div className="eye-pupil"></div>
+                </div>
+            </div>
             <h1 className="shop-header">
-                Kocour shop
+            Kocour shop
                 <img src={logoKocour} alt="Logo kocour" className="header-logo"/>
             </h1>
 
 
-    {/* ULUBIONE */}
-    {favorites.length > 0 && (
-        <div className="list-col-left">
-            <div className="list-header header-fav">
-                <h4>❤️ Ulubione <span className="badge">{favorites.length}</span></h4>
-            </div>
-            <div className="list-scroll">
-                {favorites.map((item, index) => (
-                    <div key={index} className="list-item">
-                        <img src={item.url} alt="mini" className="list-thumb" />
-                        <div className="list-details">
-                            <span className="list-name">{item.name}</span>
-                            <span className="list-price">{item.price}</span>
-                        </div>
+            {/* ULUBIONE */}
+            {favorites.length > 0 && (
+                <div className="list-col-left">
+                    <div className="list-header header-fav">
+                        <h4>❤️ Ulubione <span className="badge">{favorites.length}</span></h4>
                     </div>
-                ))}
-            </div>
-        </div>
-    )}
+                    <div className="list-scroll">
+                        {favorites.map((item, index) => (
+                            <div key={index} className="list-item">
+                                <img src={item.url} alt="mini" className="list-thumb"/>
+                                <div className="list-details">
+                                    <span className="list-name">{item.name}</span>
+                                    <span className="list-price">{item.price}</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
             {/* KONTENER KART */}
             {products.length > 0 ? (
                 <div className="cardContainer" style={{marginTop: '20px', position: 'relative'}}>
@@ -134,7 +164,7 @@ function App() {
                         <div
                             key={item.id}
                             className={getCardClassName(item.id)}
-                            style={{ zIndex: index }} // Ważne: ostatni element na górze
+                            style={{zIndex: index}} // Ważne: ostatni element na górze
                         >
                             <div
                                 style={{backgroundImage: 'url(' + item.url + ')'}}
@@ -160,36 +190,38 @@ function App() {
                 </div>
             ) : (
                 <div className="empty-state">
-                    <h2 style={{color:'black'}}>To już wszystko! 🤷‍♂️</h2>
-                    <button onClick={() => window.location.reload()} style={{padding: '10px 20px', fontSize: '16px', cursor: 'pointer'}}>
+                    <h2 style={{color: 'black'}}>To już wszystko! 🤷‍♂️</h2>
+                    <button onClick={() => window.location.reload()}
+                            style={{padding: '10px 20px', fontSize: '16px', cursor: 'pointer'}}>
                         Załaduj ponownie
                     </button>
                 </div>
             )}
-    {/* KOSZYK */}
-    {cart.length > 0 && (
-        <div className="list-col-right">
-            <div className="list-header header-cart">
-                <h4>🛒 Koszyk <span className="badge">{cart.length}</span></h4>
-            </div>
-            <div className="list-scroll">
-                {cart.map((item, index) => (
-                    <div key={index} className="list-item">
-                        <img src={item.url} alt="mini" className="list-thumb" />
-                        <div className="list-details">
-                            <span className="list-name">{item.name}</span>
-                            <span className="list-price">{item.price}</span>
-                        </div>
+            {/* KOSZYK */}
+            {cart.length > 0 && (
+                <div className="list-col-right">
+                    <div className="list-header header-cart">
+                        <h4>🛒 Koszyk <span className="badge">{cart.length}</span></h4>
                     </div>
-                ))}
-            </div>
-        </div>
-    )}
+                    <div className="list-scroll">
+                        {cart.map((item, index) => (
+                            <div key={index} className="list-item">
+                                <img src={item.url} alt="mini" className="list-thumb"/>
+                                <div className="list-details">
+                                    <span className="list-name">{item.name}</span>
+                                    <span className="list-price">{item.price}</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                </div>
+            )}
 
 
             {/* PRZYCISKI STEROWANIA */}
             {products.length > 0 && (
-                <div className="buttons" style={ {display: 'flex', gap: '25px', justifyContent: 'center'}}>
+                <div className="buttons" style={{display: 'flex', gap: '25px', justifyContent: 'center'}}>
                     <button className="btn btn-left" onClick={() => swipe('left')} disabled={!canSwipe}>❌</button>
                     <button className="btn btn-up" onClick={() => swipe('up')} disabled={!canSwipe}>🛒</button>
                     <button className="btn btn-right" onClick={() => swipe('right')} disabled={!canSwipe}>❤️</button>
@@ -198,7 +230,8 @@ function App() {
 
             {/* INFO O OSTATNIEJ AKCJI */}
             {lastDirection && products.length > 0 && (
-                <div className={`info direction-${lastDirection}`} style={{textAlign: 'center', marginTop: '20px', fontWeight: 'bold'}}>
+                <div className={`info direction-${lastDirection}`}
+                     style={{textAlign: 'center', marginTop: '20px', fontWeight: 'bold'}}>
                     {lastDirection === 'right' ? '❤️ Dodano do ulubionych' :
                         lastDirection === 'up' ? '🛒 Dodano do koszyka' :
                             '❌ Pass'}
@@ -210,18 +243,18 @@ function App() {
                     <div className="error__icon">
                         {/* Ikona SVG */}
                         <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="m13 13h-2v-6h2zm0 4h-2v-2h2zm-1-15c-1.3132 0-2.61358.25866-3.82683.7612-1.21326.50255-2.31565 1.23915-3.24424 2.16773-1.87536 1.87537-2.92893 4.41891-2.92893 7.07107 0 2.6522 1.05357 5.1957 2.92893 7.0711.92859.9286 2.03098 1.6651 3.24424 2.1677 1.21325.5025 2.51363.7612 3.82683.7612 2.6522 0 5.1957-1.0536 7.0711-2.9289 1.8753-1.8754 2.9289-4.4189 2.9289-7.0711 0-1.3132-.2587-2.61358-.7612-3.82683-.5026-1.21326-1.2391-2.31565-2.1677-3.24424-.9286-.92858-2.031-1.66518-3.2443-2.16773-1.2132-.50254-2.5136-.7612-3.8268-.7612z" fill="#393a37"></path>
+                            <path
+                                d="m13 13h-2v-6h2zm0 4h-2v-2h2zm-1-15c-1.3132 0-2.61358.25866-3.82683.7612-1.21326.50255-2.31565 1.23915-3.24424 2.16773-1.87536 1.87537-2.92893 4.41891-2.92893 7.07107 0 2.6522 1.05357 5.1957 2.92893 7.0711.92859.9286 2.03098 1.6651 3.24424 2.1677 1.21325.5025 2.51363.7612 3.82683.7612 2.6522 0 5.1957-1.0536 7.0711-2.9289 1.8753-1.8754 2.9289-4.4189 2.9289-7.0711 0-1.3132-.2587-2.61358-.7612-3.82683-.5026-1.21326-1.2391-2.31565-2.1677-3.24424-.9286-.92858-2.031-1.66518-3.2443-2.16773-1.2132-.50254-2.5136-.7612-3.8268-.7612z"
+                                fill="#393a37"></path>
                         </svg>
                     </div>
                     <div className="error__title" style={{textAlign: 'center'}}>
-                        <p style={{margin: 0, lineHeight: '1.5'}}>Prawo  = Ulubione ❤️</p>
-                        <p style={{margin: 0, lineHeight: '1.5'}}>Góra  = Koszyk 🛒</p>
-                        <p style={{margin: 0, lineHeight: '1.5'}}>Lewo  = Odrzucenie ❌</p>
+                        <p style={{margin: 0, lineHeight: '1.5'}}>Prawo = Ulubione ❤️</p>
+                        <p style={{margin: 0, lineHeight: '1.5'}}>Góra = Koszyk 🛒</p>
+                        <p style={{margin: 0, lineHeight: '1.5'}}>Lewo = Odrzucenie ❌</p>
                     </div>
                 </div>
             )}
-
-
 
 
         </div>
