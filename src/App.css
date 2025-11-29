@@ -11,7 +11,7 @@ html, body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    /* Zmieniamy height na min-height, zeby listy sie zmiescily */
+
     min-height: 100vh;
     padding-top: 50px;
 }
@@ -21,16 +21,6 @@ h1 {
     margin-bottom: 20px;
 }
 
-.cardContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100vw;
-    max-width: 400px;
-    height: 400px;
-    margin-bottom: 20px; /* Odstep od list */
-}
 
 .swipe {
     position: absolute;
@@ -52,13 +42,15 @@ h1 {
     bottom: 0;
     left: 0;
     width: 100%;
+    height: 50%;
     padding: 20px;
     box-sizing: border-box;
-    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    background: linear-gradient(to top, rgba(0,0,0,2), transparent);
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
     color: white;
 }
+
 
 .info {
     margin: 40px 0;
@@ -118,8 +110,9 @@ h1 {
 .error {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-    width: 90%;
+    width: 350px;
     padding: 12px;
+    margin-top: 20px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -161,4 +154,325 @@ h1 {
 
 .error__close path {
     fill: #fff;
+}
+
+
+/* --- Style dla kart i kontenera --- */
+.cardContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 90vw;
+    max-width: 300px; /* Dopasuj do swoich potrzeb */
+    height: 500px;
+    margin: 0 auto;
+    position: relative;
+
+}
+
+.card-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+}
+
+.card {
+    position: relative;
+    background-color: #fff;
+    width: 100%;
+    height: 100%;
+    box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
+    border-radius: 20px;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+}
+
+/* --- Animacje (Kluczowe!) --- */
+.animating-left {
+    transform: translate(-150%, -20%) rotate(-30deg);
+    opacity: 0;
+}
+
+.animating-right {
+    transform: translate(150%, -20%) rotate(30deg);
+    opacity: 0;
+}
+
+.animating-up {
+    transform: translate(0, -150%);
+    opacity: 0;
+}
+
+/* Overlay (Ikona na karcie podczas przesuwania) */
+.swipe-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 100px; /* Trochę większe ikony */
+    z-index: 10;
+    animation: fadeIn 0.2s;
+    /* Dodajemy biały kolor ikon i płynne przejście tła */
+    color: white;
+    transition: background 0.2s ease-in-out;
+    border-radius: 20px; /* Dopasowanie do zaokrąglenia karty */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* --- Kolory Tinderowe --- */
+
+/* LEWO (Nope) - Czerwony */
+.swipe-overlay.left {
+    /* Używamy rgba dla półprzezroczystości */
+    background: rgba(235, 87, 87, 0.8);
+    /* Opcjonalnie: czerwona obwódka */
+    border: 4px solid #eb5757;
+}
+.swipe-overlay.left span { transform: rotate(-20deg); }
+
+
+/* PRAWO (Like) - Zielony */
+.swipe-overlay.right {
+    background: rgba(111, 207, 151, 0.8);
+    border: 4px solid #6fcf97;
+}
+.swipe-overlay.right span { transform: rotate(20deg); }
+
+
+/* GÓRA (Super Like/Koszyk) - Niebieski */
+.swipe-overlay.up {
+    background: rgba(86, 204, 242, 0.8);
+    border: 4px solid #56ccf2;
+}
+/* Lekkie powiększenie dla Super Like */
+.swipe-overlay.up span { transform: scale(1.1); }
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* --- Przyciski --- */
+.buttons {
+    display: flex;
+    margin-top: -50px;
+    margin-bottom: 10px;
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
+}
+.cardContent h3 {
+    margin: 0;
+    margin-top: 100px;
+    /* Zwiększyłem odrobinę czcionkę, żeby cena była wyraźniejsza */
+    font-size: 1.3rem;
+    font-weight: bold;
+
+    /* Dodatkowy cień pod tekstem, żeby zielony był czytelny na każdym tle */
+    text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.cardContent p {
+    margin: 0;
+    padding: 0;
+    /* Zwiększyłem odrobinę czcionkę, żeby cena była wyraźniejsza */
+    font-size: 1.3rem;
+    font-weight: bold;
+
+    /* --- ZMIANA KOLORU NA ZIELONY --- */
+    color: #2ecc71;
+
+    /* Dodatkowy cień pod tekstem, żeby zielony był czytelny na każdym tle */
+    text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+
+
+.btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: none;
+    font-size: 24px;
+    background: linear-gradient(to right, #f4a743, #ef800e);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn:hover:not(:disabled) { transform: scale(1.1); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-left { color: #ec5e6f; }
+.btn-up { color: #2e86de; }
+.btn-right { color: #42b983; }
+
+
+/* --- NOWE LISTY PREMIUM --- */
+
+.lists-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: 95%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+    justify-content: center;
+    align-items: flex-start; /* Żeby kolumny nie rozciągały się na siłę */
+}
+
+/* Kolumna listy */
+.list-col {
+    flex: 1;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08); /* Miękki, nowoczesny cień */
+    overflow: hidden;
+    min-width: 0; /* Zapobiega rozpychaniu flexa */
+    border: 1px solid #f0f0f0;
+}
+
+/* Nagłówek listy */
+.list-header {
+    padding: 15px;
+    text-align: center;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+}
+
+.header-fav {
+    background: #fff0f1; /* Bardzo jasny różowy */
+    color: #eb5757;
+}
+
+.header-cart {
+    background: #eff6ff; /* Bardzo jasny niebieski */
+    color: #2e86de;
+}
+
+.list-header h4 {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Licznik (Badge) */
+.badge {
+    background: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Obszar przewijania (gdyby lista była długa) */
+.list-scroll {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 10px;
+    background: #fafafa;
+}
+
+/* Pojedynczy element (Wiersz) */
+.list-item {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 8px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    border: 1px solid #eee;
+    transition: transform 0.2s;
+}
+
+.list-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+
+/* Miniaturka */
+.list-thumb {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 10px;
+    border: 1px solid #eee;
+}
+
+/* Detale tekstu */
+.list-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden; /* Ucięcie tekstu */
+}
+
+.list-name {
+    font-size: 0.85rem;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Trzy kropki jak tekst za długi */
+    font-weight: 600;
+}
+
+.list-price {
+    font-size: 0.75rem;
+    color: #2ecc71; /* Zielona cena */
+    font-weight: 700;
+    margin-top: 2px;
+}
+
+/* Stylizacja paska przewijania (żeby był ładny) */
+.list-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+.list-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+.list-scroll::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 10px;
+}
+.list-scroll::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+}
+
+/* RESPONSYWNOŚĆ: Na telefonie jedna pod drugą */
+@media (max-width: 600px) {
+    .lists-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    .list-col {
+        width: 100%;
+        margin-bottom: 10px;
+    }
 }
