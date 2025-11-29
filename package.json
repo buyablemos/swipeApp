@@ -10,5 +10,11 @@
   },
   "devDependencies": {
     "vite": "^7.2.4"
+  },
+  "dependencies": {
+    "@react-spring/web": "^10.0.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-tinder-card": "^1.6.4"
   }
 }
