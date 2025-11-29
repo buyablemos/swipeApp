@@ -13,7 +13,7 @@ html, body {
     justify-content: center;
 
     min-height: 100vh;
-    padding-top: 50px;
+    padding-top: 10px;
 }
 
 h1 {
@@ -342,17 +342,32 @@ h1 {
     align-items: flex-start; /* Żeby kolumny nie rozciągały się na siłę */
 }
 
-/* Kolumna listy */
-.list-col {
-    flex: 1;
+/* --- WSPÓLNE STYLE DLA LIST --- */
+.list-col-left, .list-col-right {
     background: #ffffff;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08); /* Miękki, nowoczesny cień */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
     overflow: hidden;
-    min-width: 0; /* Zapobiega rozpychaniu flexa */
     border: 1px solid #f0f0f0;
+
+    /* Stała szerokość jest ważna przy position absolute */
+    width: 300px;
+    z-index: 70; /* Nad kartami, jeśli okno jest małe */
 }
 
+/* --- LEWA KOLUMNA (Ulubione) --- */
+.list-col-left {
+    position: absolute;
+    top: 150px;  /* Odstęp od góry */
+    left: 20px; /* Odstęp od lewej */
+}
+
+/* --- PRAWA KOLUMNA (Koszyk) --- */
+.list-col-right {
+    position: absolute;
+    top: 150px;   /* Odstęp od góry */
+    right: 20px; /* Odstęp od prawej */
+}
 /* Nagłówek listy */
 .list-header {
     padding: 15px;
@@ -476,3 +491,4 @@ h1 {
         margin-bottom: 10px;
     }
 }
+

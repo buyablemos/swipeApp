@@ -105,7 +105,25 @@ function App() {
             </h1>
 
 
-
+    {/* ULUBIONE */}
+    {favorites.length > 0 && (
+        <div className="list-col-left">
+            <div className="list-header header-fav">
+                <h4>❤️ Ulubione <span className="badge">{favorites.length}</span></h4>
+            </div>
+            <div className="list-scroll">
+                {favorites.map((item, index) => (
+                    <div key={index} className="list-item">
+                        <img src={item.url} alt="mini" className="list-thumb" />
+                        <div className="list-details">
+                            <span className="list-name">{item.name}</span>
+                            <span className="list-price">{item.price}</span>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    )}
             {/* KONTENER KART */}
             {products.length > 0 ? (
                 <div className="cardContainer" style={{marginTop: '20px', position: 'relative'}}>
@@ -145,6 +163,26 @@ function App() {
                     </button>
                 </div>
             )}
+    {/* KOSZYK */}
+    {cart.length > 0 && (
+        <div className="list-col-right">
+            <div className="list-header header-cart">
+                <h4>🛒 Koszyk <span className="badge">{cart.length}</span></h4>
+            </div>
+            <div className="list-scroll">
+                {cart.map((item, index) => (
+                    <div key={index} className="list-item">
+                        <img src={item.url} alt="mini" className="list-thumb" />
+                        <div className="list-details">
+                            <span className="list-name">{item.name}</span>
+                            <span className="list-price">{item.price}</span>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    )}
+
 
             {/* PRZYCISKI STEROWANIA */}
             {products.length > 0 && (
@@ -179,49 +217,8 @@ function App() {
                     </div>
                 </div>
             )}
-            {/* LISTY (ULUBIONE / KOSZYK) - Wersja Premium */}
-            <div className="lists-container">
 
-                {/* ULUBIONE */}
-                {favorites.length > 0 && (
-                    <div className="list-col">
-                        <div className="list-header header-fav">
-                            <h4>❤️ Ulubione <span className="badge">{favorites.length}</span></h4>
-                        </div>
-                        <div className="list-scroll">
-                            {favorites.map((item, index) => (
-                                <div key={index} className="list-item">
-                                    <img src={item.url} alt="mini" className="list-thumb" />
-                                    <div className="list-details">
-                                        <span className="list-name">{item.name}</span>
-                                        <span className="list-price">{item.price}</span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
 
-                {/* KOSZYK */}
-                {cart.length > 0 && (
-                    <div className="list-col">
-                        <div className="list-header header-cart">
-                            <h4>🛒 Koszyk <span className="badge">{cart.length}</span></h4>
-                        </div>
-                        <div className="list-scroll">
-                            {cart.map((item, index) => (
-                                <div key={index} className="list-item">
-                                    <img src={item.url} alt="mini" className="list-thumb" />
-                                    <div className="list-details">
-                                        <span className="list-name">{item.name}</span>
-                                        <span className="list-price">{item.price}</span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-            </div>
 
 
         </div>
