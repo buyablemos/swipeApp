@@ -1,87 +1,127 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TinderCard from 'react-tinder-card';
 import './App.css';
 
 
-const db = [
-    {
-        name: 'Kurtka Jeansowa Vintage',
-        price: '199 PLN',
-        url: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80'
-    },
-    {
-        name: 'Czarne Sneakersy',
-        price: '249 PLN',
-        url: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80'
-    },
-    {
-        name: 'Biały T-Shirt Basic',
-        price: '49 PLN',
-        url: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80'
-    },
-    {
-        name: 'Wełniany Płaszcz',
-        price: '450 PLN',
-        url: 'https://images.unsplash.com/photo-1539533018447-63fcce2678e3?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80'
-    }
-];
+import logoKocour from './assets/kocour.png';
 
 function App() {
     const [lastDirection, setLastDirection] = useState();
-    const [likedItems, setLikedItems] = useState([]);
+    const [favorites, setFavorites] = useState([]);
+    const [cart, setCart] = useState([]);
 
-    // Funkcja wywoływana po przesunięciu karty
-    const swiped = (direction, nameToDelete) => {
-        console.log('removing: ' + nameToDelete);
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    // Pobieranie danych
+    useEffect(() => {
+        fetch('https://fakestoreapi.com/products/')
+            .then(res => res.json())
+            .then(json => {
+                const formattedData = json.map(item => ({
+                    id: item.id,
+                    name: item.title.substring(0, 20) + '...',
+                    price: item.price + ' USD',
+                    url: item.image
+                }));
+                setProducts(formattedData);
+                setLoading(false);
+            })
+            .catch(err => console.error("Błąd:", err));
+    }, []);
+
+    const swiped = (direction, item) => {
         setLastDirection(direction);
-
-        // Logika biznesowa: Jeśli w prawo, dodaj do ulubionych
         if (direction === 'right') {
-            setLikedItems(prev => [...prev, nameToDelete]);
+            setFavorites(prev => [...prev, item]);
+        } else if (direction === 'up') {
+            setCart(prev => [...prev, item]);
         }
     };
 
-    const outOfFrame = (name) => {
-        console.log(name + ' left the screen!');
+    // --- TO JEST NOWOŚĆ: USUWANIE ---
+    const outOfFrame = (idToRemove) => {
+        console.log('Usuwam z pamięci ID:', idToRemove);
+        // Filtrujemy listę i zostawiamy tylko te produkty, które NIE mają tego ID
+        setProducts(currentProducts => currentProducts.filter(p => p.id !== idToRemove));
     };
+
+    if (loading) {
+        return <div className="app"><h1>Ładowanie ubrań... ⏳</h1></div>;
+    }
 
     return (
         <div className="app">
-            <h1>Fashion Swipe 🔥</h1>
+            <h1 className="shop-header">
+                Kocour shop
+                <img src={logoKocour} alt="Logo kocour" className="header-logo"/>
+            </h1>
 
-            <div className="cardContainer">
-                {db.map((character) => (
-                    <TinderCard
-                        className="swipe"
-                        key={character.name}
-                        onSwipe={(dir) => swiped(dir, character.name)}
-                        onCardLeftScreen={() => outOfFrame(character.name)}
-                        preventSwipe={['up', 'down']} // Blokujemy ruch góra/dół
-                    >
-                        <div
-                            style={{ backgroundImage: 'url(' + character.url + ')' }}
-                            className="card"
-                        >
-                            <div className="cardContent">
-                                <h3>{character.name}</h3>
-                                <p>{character.price}</p>
-                            </div>
-                        </div>
-                    </TinderCard>
-                ))}
-            </div>
+            {/* Wyświetlamy to tylko, jeśli są jeszcze produkty */}
+            {products.length > 0 ? (
+                <>
+                <p style={{color: '#777', fontSize: '14px', marginTop: '-15px'}}>
+                        Prawo = Ulubione ❤️ | Góra = Koszyk 🛒
+                    </p>
 
-            {lastDirection && (
-                <div className="info">
-                    Ostatnia akcja: {lastDirection === 'right' ? '❤️ Like!' : '❌ Pass'}
+                    <div className="cardContainer">
+                        {products.map((item) => (
+                            <TinderCard
+                                className="swipe"
+                                key={item.id}
+                                onSwipe={(dir) => swiped(dir, item)}
+                                // Tutaj wywołujemy usuwanie po zakończeniu animacji
+                                onCardLeftScreen={() => outOfFrame(item.id)}
+                                preventSwipe={['down']}
+                            >
+                                <div
+                                    style={{ backgroundImage: 'url(' + item.url + ')' }}
+                                    className="card"
+                                >
+                                    <div className="cardContent">
+                                        <h3>{item.name}</h3>
+                                        <p>{item.price}</p>
+                                    </div>
+                                </div>
+                            </TinderCard>
+                        ))}
+                    </div>
+                </>
+            ) : (
+                // Co pokazać, gdy usuniemy wszystkie karty?
+                <div className="empty-state">
+                    <h2>To już wszystko! 🤷‍♂️</h2>
+                    <button onClick={() => window.location.reload()} style={{padding: '10px 20px', fontSize: '16px', cursor: 'pointer'}}>
+                        Załaduj ponownie
+                    </button>
                 </div>
             )}
 
-            <div className="liked-list">
-                <h4>Twoje polubienia ({likedItems.length}):</h4>
-                <ul>
-                    {likedItems.map(item => <li key={item}>{item}</li>)}
-                </ul>
+            {lastDirection && products.length > 0 && (
+                <div className="info">
+                    {lastDirection === 'right' ? '❤️ Dodano do ulubionych' :
+                        lastDirection === 'up' ? '🛒 SUPERLIKE! W koszyku' :
+                            '❌ Pass'}
+                </div>
+            )}
+
+            <div className="lists-container">
+                <div className="list-box">
+                    <h4>❤️ Ulubione ({favorites.length})</h4>
+                    <ul>
+                        {favorites.map((item, index) => (
+                            <li key={index}>{item.name}</li>
+                        ))}
+                    </ul>
+                </div>
+                <div className="list-box">
+                    <h4>🛒 Koszyk ({cart.length})</h4>
+                    <ul>
+                        {cart.map((item, index) => (
+                            <li key={index}><b>{item.name}</b> - {item.price}</li>
+                        ))}
+                    </ul>
+                </div>
             </div>
         </div>
     );

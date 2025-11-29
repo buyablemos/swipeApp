@@ -1,17 +1,18 @@
 html, body {
     margin: 0;
     padding: 0;
-    background-color: #f3f3f3;
+    background-color: #ffffff;
     font-family: 'Segoe UI', sans-serif;
-    overflow: hidden; /* Zapobiega przewijaniu strony podczas swipe'owania */
+    overflow-x: hidden;
 }
 
 .app {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: 100vh;
+    /* Zmieniamy height na min-height, zeby listy sie zmiescily */
+    min-height: 100vh;
+    padding-top: 50px;
 }
 
 h1 {
@@ -23,9 +24,9 @@ h1 {
     width: 90vw;
     max-width: 300px;
     height: 400px;
+    margin-bottom: 20px; /* Odstep od list */
 }
 
-/* To jest najważniejsze dla efektu stosu */
 .swipe {
     position: absolute;
 }
@@ -54,19 +55,55 @@ h1 {
     color: white;
 }
 
-.cardContent h3 {
-    margin: 0;
-}
-
 .info {
-    margin-top: 20px;
+    margin: 20px 0;
     font-weight: bold;
     color: #333;
+    height: 20px;
 }
 
-.liked-list {
-    margin-top: 20px;
-    font-size: 0.8rem;
-    color: #555;
-    text-align: center;
+/* Nowe style dla list */
+.lists-container {
+    display: flex;
+    gap: 20px;
+    width: 90%;
+    max-width: 600px;
+    justify-content: center;
+    padding-bottom: 50px;
+}
+
+.list-box {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    flex: 1;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.list-box h4 {
+    margin-top: 0;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+.list-box ul {
+    padding-left: 20px;
+    font-size: 0.9rem;
+}
+
+.shop-header {
+    display: flex;
+    align-items: center; /* Wyrównanie w pionie (do środka) */
+    justify-content: center; /* Wyrównanie w poziomie (na środek ekranu) */
+    gap: 15px; /* Odstęp między napisem a logiem */
+    color: #ff9902;
+    margin-bottom: 20px;
+}
+
+/* Style dla samego obrazka logo */
+.header-logo {
+    height: 50px; /* Ustawiamy stałą wysokość, żeby pasowało do tekstu */
+    width: auto;  /* Szerokość dostosuje się sama */
+    /* Opcjonalnie: dodaj lekki cień lub zaokrąglenie */
+    /* border-radius: 50%; */
 }
