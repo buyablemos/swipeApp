@@ -8,6 +8,7 @@ function App() {
     const [loading, setLoading] = useState(true);
     const [favorites, setFavorites] = useState([]);
     const [cart, setCart] = useState([]);
+    const [instructionBool, setInstructionBool] = useState(true);
 
     // --- STANY ANIMACJI (z App2.jsx) ---
     const [lastDirection, setLastDirection] = useState(null);
@@ -40,7 +41,9 @@ function App() {
     // --- LOGIKA SWIPE (Manualna animacja z App2) ---
     const swipe = (dir) => {
         if (!canSwipe) return;
-
+        if (instructionBool) {
+            setInstructionBool(false);
+        }
         // Bierzemy ostatnią kartę z listy (tę na samej górze stosu)
         const currentCard = products[products.length - 1];
 
@@ -74,9 +77,9 @@ function App() {
         const handleKeyDown = (event) => {
             if (!canSwipe) return;
             switch (event.key) {
-                case 'ArrowLeft': swipe('left'); break;
-                case 'ArrowRight': swipe('right'); break;
-                case 'ArrowUp': swipe('up'); break;
+                case 'a': swipe('left'); break;
+                case 'd': swipe('right'); break;
+                case 'w': swipe('up'); break;
                 default: break;
             }
         };
@@ -141,7 +144,7 @@ function App() {
                                 {animatingCardId === item.id && (
                                     <div className={`swipe-overlay ${animationDirection}`}>
                                         {animationDirection === 'left' && <span>❌</span>}
-                                        {animationDirection === 'right' && <span>❤️</span>}
+                                        {animationDirection === 'right' && <span>💚</span>}
                                         {animationDirection === 'up' && <span>🛒</span>}
                                     </div>
                                 )}
@@ -157,7 +160,7 @@ function App() {
                 </div>
             ) : (
                 <div className="empty-state">
-                    <h2>To już wszystko! 🤷‍♂️</h2>
+                    <h2 style={{color:'black'}}>To już wszystko! 🤷‍♂️</h2>
                     <button onClick={() => window.location.reload()} style={{padding: '10px 20px', fontSize: '16px', cursor: 'pointer'}}>
                         Załaduj ponownie
                     </button>
@@ -202,7 +205,7 @@ function App() {
                 </div>
             )}
             {/* ERROR / INSTRUKCJA */}
-            {products.length > 0 && (
+            {instructionBool && (
                 <div className="error">
                     <div className="error__icon">
                         {/* Ikona SVG */}
