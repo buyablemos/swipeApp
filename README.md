@@ -7,6 +7,9 @@ What this README covers:
 - How to run the frontend (npm)
 - How to run `product_swipe.py` (EEG → frontend bridge)
 
+## Demo
+https://youtu.be/d7cmg8tnndc?si=imN02PDQJ4wQWFzJ
+
 ## Quick summary
 - Frontend: simple React swipe UI in `src/` and `index.html`.
 - EEG pipeline: `EEGDeviceControl` — collection, preprocessing, training and live bridge (`product_swipe.py`).
